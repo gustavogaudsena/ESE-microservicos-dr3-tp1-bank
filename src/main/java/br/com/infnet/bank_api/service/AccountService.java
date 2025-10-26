@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -17,18 +18,19 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AccountService {
     private final AccountRepository repository;
+    private final RestTemplate restTemplate;
 
 
-    public Account getByAccountNumber(Integer accountNumber) {
+    public Account getByAccountNumber(String accountNumber) {
         return repository.findById(accountNumber).orElseThrow(() -> new NoSuchElementException("Account not found: " + accountNumber));
     }
 
-    public User getUserByAccountNumber(Integer accountNumber) {
+    public User getUserByAccountNumber(String accountNumber) {
         Account acc = repository.findById(accountNumber).orElseThrow(() -> new NoSuchElementException("Account not found: " + accountNumber));
 
-        // busca no serviço de usuários o usuário
+        String url = "http://localhost:8080/" + acc.getUserId();
 
-        return new User();
+        return restTemplate.getForObject(url, User.class);
     }
 
     public Account save(Account account) {
@@ -36,7 +38,7 @@ public class AccountService {
     }
 
     @Transactional()
-    public boolean deposit(Integer accountNumber, Integer amount) {
+    public boolean deposit(String accountNumber, Integer amount) {
         Account account = repository.findById(accountNumber).orElseThrow(() -> new NoSuchElementException("Account not found: " + accountNumber));
 
         account.deposit(amount);
@@ -47,7 +49,7 @@ public class AccountService {
     }
 
     @Transactional()
-    public boolean withdraw(Integer accountNumber, Integer amount) throws IOException {
+    public boolean withdraw(String accountNumber, Integer amount) throws IOException {
         Account account = repository.findById(accountNumber).orElseThrow(() -> new NoSuchElementException("Account not found: " + accountNumber));
 
         account.withdraw(amount);

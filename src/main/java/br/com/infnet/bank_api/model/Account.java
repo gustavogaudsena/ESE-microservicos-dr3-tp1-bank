@@ -16,14 +16,14 @@ import java.util.UUID;
 public class Account {
 
     @Id
-    @Column(nullable = false)
-    private Integer accountNumber;
+    @Column(nullable = false, length = 40)
+    private String accountNumber;
+
+    @Column(nullable = false, length = 20)
+    private String agencyNumber;
 
     @Column(nullable = false)
-    private Integer agencyNumber;
-
-    @Column(nullable = false)
-    private Integer balance;
+    private Integer balance = 0;
 
     @Column(nullable = false)
     private UUID userId;

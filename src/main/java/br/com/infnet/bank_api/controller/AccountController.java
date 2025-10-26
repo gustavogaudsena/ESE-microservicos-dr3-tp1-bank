@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/produto")
+@RequestMapping()
 @RequiredArgsConstructor
 public class AccountController {
     private final AccountService service;
 
 
     @GetMapping("/{accountNumber}")
-    public ResponseEntity<Account> getByAccountNumber(@PathVariable Integer accountNumber) {
+    public ResponseEntity<Account> getByAccountNumber(@PathVariable String accountNumber) {
         return ResponseEntity.ok(service.getByAccountNumber(accountNumber));
     }
 
@@ -28,14 +28,14 @@ public class AccountController {
 
         Account account = new Account();
         account.setAccountNumber(dto.accountNumber());
-        account.setAgencyNumber(dto.accountNumber());
+        account.setAgencyNumber(dto.agencyNumber());
         account.setUserId(dto.userId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(account));
     }
 
     @PutMapping("/{accountNumber}/deposit")
-    public ResponseEntity<DepositResponseDTO> deposit(@PathVariable Integer accountNumber, @RequestBody DepositDTO dto) {
+    public ResponseEntity<DepositResponseDTO> deposit(@PathVariable String accountNumber, @RequestBody DepositDTO dto) {
         service.deposit(accountNumber, dto.amount());
 
         String message = String.format("Deposit of %d done", dto.amount());
@@ -43,7 +43,7 @@ public class AccountController {
     }
 
     @PutMapping("/{accountNumber}/withdraw")
-    public ResponseEntity<WithdrawResponseDTO> withdraw(@PathVariable Integer accountNumber, @RequestBody WithdrawDTO dto) {
+    public ResponseEntity<WithdrawResponseDTO> withdraw(@PathVariable String accountNumber, @RequestBody WithdrawDTO dto) {
         try {
             service.withdraw(accountNumber, dto.amount());
 
@@ -57,7 +57,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountNumber}/user")
-    public ResponseEntity<User> getUserByAccountNumber(@PathVariable Integer accountNumber) {
+    public ResponseEntity<User> getUserByAccountNumber(@PathVariable String accountNumber) {
         return ResponseEntity.ok(service.getUserByAccountNumber(accountNumber));
     }
 
